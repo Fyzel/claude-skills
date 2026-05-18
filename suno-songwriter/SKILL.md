@@ -32,7 +32,7 @@ If the user has already given enough of a brief in the conversation, skip straig
 
 ## Phase 2: Compose
 
-Write the song to the brief. Then format the output as the three blocks defined below. Consult `references/tag-reference.md` for the exact set of supported Suno meta tags and how they are written — do not invent tags or guess at syntax. That file is large; scan its section headers and read the entries for the specific tags you intend to use (structural tags like `[intro]`, `[verse]`, `[chorus]`, `[bridge]`, `[outro]`, plus any vocal, instrument, dynamic, or effect tags relevant to the brief). Also respect the "Style of Music/Lyrics restrictions" section near the top — Suno rejects certain trademarked terms, so use the suggested substitutes.
+Write the song to the brief. Then format the output as the three blocks defined below. Consult `references/tag-reference-llm.md` for the exact set of supported Suno meta tags and how they are written — do not invent tags or guess at syntax. That file is large; scan its section headers and read the entries for the specific tags you intend to use (structural tags like `[intro]`, `[verse]`, `[chorus]`, `[bridge]`, `[outro]`, plus any vocal, instrument, dynamic, or effect tags relevant to the brief). Also respect the "Style of Music/Lyrics restrictions" section near the top — Suno rejects certain trademarked terms, so use the suggested substitutes.
 
 ### Pronunciation rules
 
