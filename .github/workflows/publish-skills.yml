@@ -20,6 +20,7 @@ jobs:
 
       - name: Package and publish skills
         run: |
+          VERSION="${GITHUB_RUN_NUMBER}"
           SHORT_SHA=$(git rev-parse --short=7 HEAD)
           trap 'rm -f *.skill' EXIT
           failed=0
@@ -33,7 +34,7 @@ jobs:
             fi
 
             echo "Processing: ${skill_name}"
-            tag="${skill_name}-${SHORT_SHA}"
+            tag="${skill_name}-v${VERSION}"
 
             if gh release view "${tag}" > /dev/null 2>&1; then
               echo "Release ${tag} already exists, skipping"
@@ -48,8 +49,8 @@ jobs:
             fi
 
             if gh release create "${tag}" \
-              --title "${skill_name} @ ${SHORT_SHA}" \
-              --notes "Packaged from commit ${SHORT_SHA}" \
+              --title "${skill_name} v${VERSION}" \
+              --notes "Packaged from commit ${SHORT_SHA} (run ${VERSION})" \
               --target "${GITHUB_SHA}" \
               --latest=false \
               "${asset}"; then
