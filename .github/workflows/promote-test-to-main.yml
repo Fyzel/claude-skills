@@ -1,0 +1,34 @@
+name: "[chore] 🚀 Promote test to main"
+
+on:
+  push:
+    branches:
+      - test
+  workflow_dispatch:
+
+jobs:
+  promote:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+    env:
+      GH_TOKEN: ${{ secrets.PROMOTE_TOKEN }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+
+      - name: Create promotion pull request
+        run: |
+          gh pr create \
+            --base main \
+            --head test \
+            --title "Promotion: 🚀 test → main" \
+            --body "Automated promotion of the test branch to main." \
+            --assignee ${{ vars.PROMOTION_ASSIGNEE }} \
+          || echo "PR already exists or no diff between branches, skipping"
+
+#      - name: Push test to main
+#        run: git push origin refs/heads/test:refs/heads/main --force
