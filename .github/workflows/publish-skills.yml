@@ -1,0 +1,63 @@
+name: Package and Publish Skills
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+  workflow_call:
+
+jobs:
+  publish-skills:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    env:
+      GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      - name: Package and publish skills
+        run: |
+          SHORT_SHA=$(git rev-parse --short=7 HEAD)
+          trap 'rm -f *.skill' EXIT
+          failed=0
+
+          for dir in */; do
+            skill_name="${dir%/}"
+
+            if [ ! -f "${skill_name}/SKILL.md" ]; then
+              echo "Skipping ${skill_name}: no SKILL.md"
+              continue
+            fi
+
+            echo "Processing: ${skill_name}"
+            tag="${skill_name}-${SHORT_SHA}"
+
+            if gh release view "${tag}" > /dev/null 2>&1; then
+              echo "Release ${tag} already exists, skipping"
+              continue
+            fi
+
+            asset="${skill_name}.skill"
+            if ! (cd "${skill_name}" && zip -r "../${asset}" .); then
+              echo "::error::Failed to zip ${skill_name}" >&2
+              failed=1
+              continue
+            fi
+
+            if gh release create "${tag}" \
+              --title "${skill_name} @ ${SHORT_SHA}" \
+              --notes "Packaged from commit ${SHORT_SHA}" \
+              --target "${GITHUB_SHA}" \
+              --latest=false \
+              "${asset}"; then
+              echo "Published: ${tag}"
+            else
+              echo "::error::Failed to publish ${skill_name}" >&2
+              failed=1
+            fi
+          done
+
+          [ "$failed" -eq 0 ] || exit 1
