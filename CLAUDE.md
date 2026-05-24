@@ -8,13 +8,14 @@ A collection of custom **Claude Code skills** — prompt-driven instruction sets
 
 ## Skill File Structure
 
-Each skill lives in its own subdirectory:
+Each skill lives under the `skills/` directory:
 
 ```
-<skill-name>/
-  SKILL.md              # The skill itself (required)
-  references/           # Supporting reference material (optional)
-    <reference>.md
+skills/
+  <skill-name>/
+    SKILL.md              # The skill itself (required)
+    references/           # Supporting reference material (optional)
+      <reference>.md
 ```
 
 `SKILL.md` must begin with YAML frontmatter:
@@ -33,17 +34,57 @@ The `description` field is the most critical part of any skill. Claude Code read
 
 ## Reference Files
 
-Large reference files (like `suno-songwriter/references/tag-reference.md`) are too big to read in full. Skills that use them must instruct Claude to **scan section headers first**, then read only the relevant entries for the current task. When editing reference files, preserve the heading structure — it is the navigation surface.
+Large reference files are too big to read in full. Skills that use them must instruct Claude to **scan section headers first**, then read only the relevant entries for the current task. When editing reference files, preserve the heading structure — it is the navigation surface.
 
 ## Adding a New Skill
 
-1. Create `<skill-name>/SKILL.md` with frontmatter (`name`, `description`) and the full skill instructions.
+1. Create `skills/<skill-name>/SKILL.md` with frontmatter (`name`, `description`) and the full skill instructions.
 2. Register it in the Claude Code settings so it appears in the skill list (typically via the plugin or settings.json `skills` array — check your local Claude Code config).
-3. If the skill references large lookup tables or tag catalogs, put them under `<skill-name>/references/` and instruct the skill to read them selectively by section.
+3. If the skill references large lookup tables or tag catalogs, put them under `skills/<skill-name>/references/` and instruct the skill to read them selectively by section.
 
-## Skill Authoring Conventions (from existing skill)
+## Skill Authoring Conventions
 
 - **Two-phase structure** works well for creative/generation skills: an *interview* phase to gather the brief, then a *composition/output* phase. Skip the interview if the user already supplied sufficient context.
 - **Hard limits vs. advisory targets**: distinguish between limits that cause silent failures in downstream tools (hard — non-negotiable) and optimal ranges that improve quality (advisory — state them, but don't enforce them as gates).
 - **Output as fenced code blocks**: anything the user needs to copy-paste verbatim should be in its own fenced code block with nothing extra inside.
 - **Character counts**: when a downstream tool has a character limit, compute counts — do not estimate.
+
+## Branch Flow and CI/CD
+
+This repo uses a three-branch promotion pipeline: `dev` → `test` → `main`.
+
+- Push to `dev` automatically opens a PR promoting `dev` → `test`.
+- Push to `test` automatically opens a PR promoting `test` → `main`.
+- Merge to `main` triggers skill packaging and publishing.
+- All changes require review from @Fyzel (enforced via CODEOWNERS).
+
+Work on feature branches cut from `dev`, then PR into `dev`.
+
+## Skill Publishing
+
+On every merge to `main`, `publish-skills.yml` discovers skill directories under `skills/*/`, zips each one into `<skill-name>.skill` (flat archive — no wrapping directory), and creates a GitHub Release tagged `<skill-name>-v<count+1>`, where `count` is the number of existing matching tags for that skill. Releases are idempotent: an existing tag is skipped, not an error.
+
+The `.skill` archive contains exactly the `skills/<skill-name>/` directory contents at the zip root (flat — no wrapping directory):
+```
+SKILL.md
+references/
+  <reference>.md
+```
+
+## Pre-commit Hooks
+
+Pre-commit is configured with three hooks (`.pre-commit-config.yaml`). All run against local tools that must be installed:
+
+- **trivy-secrets** — secret detection scan of the whole repo (requires `trivy`)
+- **pylint** — lints any Python files (requires `pylint`)
+- **bandit** — security scan of any Python files (requires `bandit -r -ll`)
+
+Install hooks after cloning:
+```sh
+pre-commit install
+```
+
+Run all hooks manually:
+```sh
+pre-commit run --all-files
+```
