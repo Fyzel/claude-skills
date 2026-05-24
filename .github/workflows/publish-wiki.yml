@@ -58,10 +58,10 @@ jobs:
             display=$(get_frontmatter "${skill_file}" "name")
             description=$(get_frontmatter "${skill_file}" "description")
 
-            echo "| [${display}](${display}) | ${description} |" >> "${home}"
+            echo "| [${display}](${skill_name}) | ${description} |" >> "${home}"
 
             # Build per-skill page
-            skill_page="wiki/${display}.md"
+            skill_page="wiki/${skill_name}.md"
             {
               strip_frontmatter "${skill_file}"
 
