@@ -54,7 +54,7 @@ Composes original songs and delivers them as three copy-paste-ready blocks for t
 1. **Interview** — asks about concept, mood, genre, instrumentation, vocals, pace, time signature, and language in a single batch. Skipped if you've already provided a full brief.
 2. **Compose** — writes the song using [Suno meta tags](suno-songwriter/references/tag-reference-llm.md) for structure, dynamics, and vocal direction. Handles pronunciation rules (acronyms vs. initialisms), explicit content flagging, and non-English translation automatically.
 
-**Location:** [`suno-songwriter/`](suno-songwriter/)
+**Location:** [`skills/suno-songwriter/`](skills/suno-songwriter/)
 
 **Credit:** Tag reference and Suno documentation by [stayen](https://github.com/stayen/suno-reference).
 
