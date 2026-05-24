@@ -60,10 +60,8 @@ jobs:
             if [ -z "${changes}" ]; then
               changes="- No changes recorded"
             fi
-            notes="Packaged from commit ${SHORT_SHA} (run ${GITHUB_RUN_NUMBER})
-
-## Changes
-${changes}"
+            notes=$(printf 'Packaged from commit %s (run %s)\n\n## Changes\n%s' \
+              "${SHORT_SHA}" "${GITHUB_RUN_NUMBER}" "${changes}")
 
             asset="${skill_name}.skill"
             if ! (cd "skills/${skill_name}" && zip -r "../../${asset}" .); then
