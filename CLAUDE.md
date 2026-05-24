@@ -55,14 +55,20 @@ This repo uses a three-branch promotion pipeline: `dev` → `test` → `main`.
 
 - Push to `dev` automatically opens a PR promoting `dev` → `test`.
 - Push to `test` automatically opens a PR promoting `test` → `main`.
-- Merge to `main` triggers skill packaging and publishing.
+- Merge to `main` triggers skill packaging/publishing and wiki publishing.
 - All changes require review from @Fyzel (enforced via CODEOWNERS).
 
 Work on feature branches cut from `dev`, then PR into `dev`.
 
+Promotion PRs require two GitHub repo settings configured:
+- **Secret** `PROMOTE_TOKEN` — a PAT with `repo` scope (used to open PRs across branches; `GITHUB_TOKEN` cannot open PRs targeting protected branches in some configurations).
+- **Variable** `PROMOTION_ASSIGNEE` — GitHub username to assign promotion PRs to.
+
 ## Skill Publishing
 
-On every merge to `main`, `publish-skills.yml` discovers skill directories under `skills/*/`, zips each one into `<skill-name>.skill` (flat archive — no wrapping directory), and creates a GitHub Release tagged `<skill-name>-v<count+1>`, where `count` is the number of existing matching tags for that skill. Releases are idempotent: an existing tag is skipped, not an error.
+On every merge to `main`, two workflows run:
+
+**`publish-skills.yml`** — discovers skill directories under `skills/*/`, zips each one into `<skill-name>.skill` (flat archive — no wrapping directory), and creates a GitHub Release tagged `<skill-name>-v<count+1>`, where `count` is the number of existing matching tags for that skill. Releases are idempotent: an existing tag is skipped, not an error.
 
 The `.skill` archive contains exactly the `skills/<skill-name>/` directory contents at the zip root (flat — no wrapping directory):
 ```
@@ -70,6 +76,8 @@ SKILL.md
 references/
   <reference>.md
 ```
+
+**`publish-wiki.yml`** — builds the GitHub repo wiki from skills. The `Home.md` page is a generated index table (skill name + description from frontmatter). Each skill gets its own wiki page: the `SKILL.md` content with frontmatter stripped, followed by any files under `references/` appended verbatim. The wiki is only updated when content changes.
 
 ## Pre-commit Hooks
 

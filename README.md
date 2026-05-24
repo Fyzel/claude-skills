@@ -5,12 +5,37 @@ A collection of custom skills for [Claude Code](https://claude.ai/code). Each sk
 ## Table of Contents
 
 - [Skills](#skills)
+  - [hand-off](#hand-off)
   - [suno-songwriter](#suno-songwriter)
 - [Skill Structure](#skill-structure)
 
 ---
 
 ## Skills
+
+### hand-off
+
+**Trigger phrases:** `/hand-off`, "hand off", "delegate to a subagent", "spin this off", "pass this to a fresh agent", or any mention of context exhaustion and wanting to continue elsewhere.
+
+Delegates a defined scope of work to a fresh Claude Code subagent with full context preserved across the boundary. Each handoff is recorded under `<project-root>/.handoffs/<feature>/`:
+
+| File | Purpose |
+|---|---|
+| `input.md` | Brief written by parent agent: scope, context, constraints, success criteria |
+| `output.md` | Results written by subagent (required completion criterion) |
+| `baseline.txt` | Git state snapshot for recovery if `output.md` is missing (git projects only) |
+
+**How it works:**
+
+1. **Clarify** — confirms scope, context needed, and "done" criteria before writing anything.
+2. **Set up** — creates `.handoffs/<feature>/`, resolves `.gitignore` question on first use in a git repo.
+3. **Write `input.md`** — captures scope, context, current state, constraints, and success criteria.
+4. **Spawn subagent** — uses the Task tool; subagent reads `input.md` and must write `output.md`.
+5. **Synthesize** — verifies `output.md` exists, then summarizes results back into the parent conversation. Offers recovery options (diff reconstruction, re-run, manual inspect) if `output.md` is missing.
+
+**Location:** [`skills/handoff/`](skills/handoff/)
+
+---
 
 ### suno-songwriter
 
@@ -44,3 +69,10 @@ Composes original songs and delivers them as three copy-paste-ready blocks for t
 ```
 
 The `description` field in `SKILL.md` frontmatter controls when Claude Code auto-invokes the skill — write it to cover both canonical and fuzzy trigger phrases.
+
+## Publishing
+
+On every merge to `main`:
+
+- Each skill directory is zipped into a `<skill-name>.skill` archive and published as a GitHub Release tagged `<skill-name>-v<N>`.
+- The GitHub wiki is auto-generated from all skills: a `Home` index page plus one page per skill (frontmatter stripped, reference files appended).
