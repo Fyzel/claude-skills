@@ -62,7 +62,7 @@ Work on feature branches cut from `dev`, then PR into `dev`.
 
 ## Skill Publishing
 
-On every merge to `main`, `publish-skills.yml` discovers every top-level directory containing a `SKILL.md`, zips it into `<skill-name>.skill` (flat archive — no wrapping directory), and creates a GitHub Release tagged `<skill-name>-v<run_number>`. Releases are idempotent: an existing tag is skipped, not an error.
+On every merge to `main`, `publish-skills.yml` discovers skill directories under `skills/*/`, zips each one into `<skill-name>.skill` (flat archive — no wrapping directory), and creates a GitHub Release tagged `<skill-name>-v<count+1>`, where `count` is the number of existing matching tags for that skill. Releases are idempotent: an existing tag is skipped, not an error.
 
 The `.skill` archive contains exactly the `skills/<skill-name>/` directory contents at the zip root (flat — no wrapping directory):
 ```
