@@ -35,8 +35,13 @@ jobs:
               continue
             fi
 
-            prev_count=$(git tag --list "${skill_name}-v*" | wc -l)
-            skill_version=$((prev_count + 1))
+            latest_tag=$(git tag --list "${skill_name}-v*" --sort=-version:refname | head -1)
+            if [ -n "${latest_tag}" ]; then
+              latest_num="${latest_tag##*-v}"
+              skill_version=$((latest_num + 1))
+            else
+              skill_version=1
+            fi
             tag="${skill_name}-v${skill_version}"
 
             echo "Processing: ${skill_name} → ${tag}"
@@ -46,9 +51,8 @@ jobs:
               continue
             fi
 
-            prev_tag=$(git tag --list "${skill_name}-v*" --sort=-version:refname | head -1)
-            if [ -n "${prev_tag}" ]; then
-              commit_range="${prev_tag}..HEAD"
+            if [ -n "${latest_tag}" ]; then
+              commit_range="${latest_tag}..HEAD"
             else
               commit_range="HEAD"
             fi
