@@ -58,6 +58,8 @@ def validate_skill(skill_dir):
     if "description" not in fm:
         issues.append("frontmatter missing required 'description' field")
     else:
+        if re.search(r'<[^>]+>', fm["description"]):
+            issues.append("description contains XML tags — Claude Code rejects these on load")
         desc_len = len(fm["description"]) + len(fm.get("when_to_use", ""))
         if desc_len > MAX_DESC_CHARS:
             issues.append(
