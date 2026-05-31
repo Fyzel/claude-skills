@@ -1,6 +1,6 @@
 ---
 name: hand-off
-description: Delegates a defined scope of work to a fresh Claude Code subagent, with full current-context preserved across the boundary. Use this skill whenever the user invokes `/hand-off` or asks (in any phrasing) to hand off, delegate, spin off, fork, or pass work to another agent or a fresh agent. Also use when the user mentions running out of context and wanting to continue elsewhere, or wants to scope a chunk of work to its own session. Captures current context into `<project-root>/.handoffs/<feature>/input.md`, spawns a subagent via the Task tool to complete the work, then synthesizes the resulting `output.md` back into the parent conversation. Handoff directories persist on disk as an audit trail.
+description: Delegates a defined scope of work to a fresh Claude Code subagent, with full current-context preserved across the boundary. Use this skill whenever the user invokes `/hand-off` or asks (in any phrasing) to hand off, delegate, spin off, fork, or pass work to another agent or a fresh agent. Also use when the user mentions running out of context and wanting to continue elsewhere, or wants to scope a chunk of work to its own session. Captures current context into a handoff directory, spawns a subagent via the Task tool to complete the work, then synthesizes the resulting output back into the parent conversation. Handoff directories persist on disk as an audit trail.
 ---
 
 # Hand-off
