@@ -3,7 +3,6 @@
 import re
 import sys
 import zipfile
-import io
 import argparse
 from pathlib import Path
 
@@ -76,12 +75,14 @@ def validate_skill(skill_dir):
 
 
 def simulate_package(skill_dir):
-    buf = io.BytesIO()
-    with zipfile.ZipFile(buf, "w", zipfile.ZIP_DEFLATED) as zf:
+    test_dir = skill_dir / ".test"
+    test_dir.mkdir(exist_ok=True)
+    out_path = test_dir / f"{skill_dir.name}.skill"
+    with zipfile.ZipFile(out_path, "w", zipfile.ZIP_DEFLATED) as zf:
         for f in skill_dir.rglob("*"):
-            if f.is_file():
+            if f.is_file() and not f.is_relative_to(test_dir):
                 zf.write(f, f.relative_to(skill_dir))
-    return len(buf.getvalue())
+    return out_path.stat().st_size
 
 
 def main():
@@ -93,7 +94,7 @@ def main():
     if args.skill:
         candidates = [SKILLS_DIR / args.skill]
     else:
-        candidates = sorted(d for d in SKILLS_DIR.iterdir() if d.is_dir())
+        candidates = sorted(d for d in SKILLS_DIR.iterdir() if d.is_dir() and not d.name.startswith("."))
 
     if not candidates:
         print("No skills found.")
