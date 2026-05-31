@@ -6,8 +6,10 @@ A collection of custom skills for [Claude Code](https://claude.ai/code). Each sk
 
 - [Skills](#skills)
   - [hand-off](#hand-off)
+  - [skill-validator](#skill-validator)
   - [suno-songwriter](#suno-songwriter)
 - [Skill Structure](#skill-structure)
+- [Development](#development)
 
 ---
 
@@ -33,7 +35,28 @@ Delegates a defined scope of work to a fresh Claude Code subagent with full cont
 4. **Spawn subagent** — uses the Task tool; subagent reads `input.md` and must write `output.md`.
 5. **Synthesize** — verifies `output.md` exists, then summarizes results back into the parent conversation. Offers recovery options (diff reconstruction, re-run, manual inspect) if `output.md` is missing.
 
-**Location:** [`skills/handoff/`](skills/handoff/)
+**Location:** [`skills/hand-off/`](skills/hand-off/)
+
+---
+
+### skill-validator
+
+**Trigger phrases:** "validate skill", "lint skill", "check skill", "verify SKILL.md", or any request to confirm a skill is correctly structured before publishing or importing.
+
+Validates `SKILL.md` files in the `skills/` directory against Anthropic's structural requirements:
+
+| Check | Detail |
+|---|---|
+| `name` present | Must exist in frontmatter |
+| `name` matches directory | `name: foo` must be in `skills/foo/` |
+| `description` present | Must exist in frontmatter |
+| Description length | `description` + `when_to_use` ≤ 1,536 chars |
+| No XML tags in description | Claude Code rejects skills with `<tag>` syntax in description |
+| Frontmatter delimited | Must open and close with `---` |
+
+Packaging simulation writes a `.skill` archive to `skills/<name>/.test/<name>.skill` for local install testing.
+
+**Location:** [`skills/skill-validator/`](skills/skill-validator/)
 
 ---
 
@@ -63,16 +86,41 @@ Composes original songs and delivers them as three copy-paste-ready blocks for t
 ## Skill Structure
 
 ```
-<skill-name>/
-  SKILL.md              # Skill instructions with YAML frontmatter (name, description)
-  references/           # Supporting reference files (optional)
+skills/
+  <skill-name>/
+    SKILL.md              # Skill instructions with YAML frontmatter (name, description)
+    scripts/              # Driver scripts bundled with the skill (optional)
+    references/           # Supporting reference files (optional)
+    .test/                # Local test artifacts — gitignored, not published
 ```
 
 The `description` field in `SKILL.md` frontmatter controls when Claude Code auto-invokes the skill — write it to cover both canonical and fuzzy trigger phrases.
+
+## Development
+
+Requires Python 3.9+ and a virtual environment:
+
+```sh
+python -m venv .venv
+pip install -r requirements.txt
+pre-commit install
+```
+
+Validate all skill files and produce local `.skill` packages:
+
+```sh
+# Windows
+.venv/Scripts/python skills/skill-validator/scripts/validate-skills.py
+
+# Linux / macOS
+.venv/bin/python skills/skill-validator/scripts/validate-skills.py
+```
+
+The validator also runs automatically on every commit that touches `skills/` (validation only — no packaging).
 
 ## Publishing
 
 On every merge to `main`:
 
-- Each skill directory is zipped into a `<skill-name>.skill` archive and published as a GitHub Release tagged `<skill-name>-v<N>`.
+- Each skill directory is zipped into a `<skill-name>.skill` archive (`.test/` excluded) and published as a GitHub Release tagged `<skill-name>-v<N>`.
 - The GitHub wiki is auto-generated from all skills: a `Home` index page plus one page per skill (frontmatter stripped, reference files appended).
