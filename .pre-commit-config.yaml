@@ -10,7 +10,7 @@ repos:
         name: Package skills
         language: system
         entry: python
-        args: [skills/skill-validator/scripts/validate-skills.py]
+        args: [skills/skill-validator/scripts/validate-skills.py, --no-package]
         files: ^skills/
         pass_filenames: false
 

@@ -6,6 +6,8 @@ import zipfile
 import argparse
 from pathlib import Path
 
+import yaml
+
 
 def find_repo_root():
     p = Path(__file__).resolve().parent
@@ -27,11 +29,12 @@ def parse_frontmatter(text):
     end = next((i for i, l in enumerate(lines[1:], 1) if l.strip() == "---"), None)
     if end is None:
         return None, text
-    fm = {}
-    for line in lines[1:end]:
-        m = re.match(r'^(\w+):\s*(.*)', line)
-        if m:
-            fm[m.group(1)] = m.group(2).strip()
+    try:
+        fm = yaml.safe_load("\n".join(lines[1:end])) or {}
+        if not isinstance(fm, dict):
+            return None, text
+    except yaml.YAMLError:
+        return None, text
     return fm, "\n".join(lines[end + 1:])
 
 
