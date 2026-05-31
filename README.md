@@ -102,7 +102,9 @@ Requires Python 3.9+ and a virtual environment:
 
 ```sh
 python -m venv .venv
-pip install -r requirements.txt
+# Windows: .venv\Scripts\activate
+# Linux / macOS: source .venv/bin/activate
+python -m pip install -r requirements.txt
 pre-commit install
 ```
 
