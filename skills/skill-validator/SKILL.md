@@ -20,19 +20,31 @@ Validates `SKILL.md` files in the `skills/` directory against Anthropic's requir
 Validate all skills:
 
 ```sh
+# Windows
 .venv/Scripts/python skills/skill-validator/scripts/validate-skills.py
+
+# Linux / macOS
+.venv/bin/python skills/skill-validator/scripts/validate-skills.py
 ```
 
 Validate one skill by name:
 
 ```sh
+# Windows
 .venv/Scripts/python skills/skill-validator/scripts/validate-skills.py <skill-name>
+
+# Linux / macOS
+.venv/bin/python skills/skill-validator/scripts/validate-skills.py <skill-name>
 ```
 
 Skip packaging simulation:
 
 ```sh
+# Windows
 .venv/Scripts/python skills/skill-validator/scripts/validate-skills.py --no-package
+
+# Linux / macOS
+.venv/bin/python skills/skill-validator/scripts/validate-skills.py --no-package
 ```
 
 Exit code `0` = all pass. Exit code `1` = one or more failures.
