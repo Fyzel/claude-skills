@@ -1,3 +1,4 @@
 /.claude/settings.local.json
 /.remember/logs/*
 /.venv
+skills/*/.test/

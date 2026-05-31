@@ -58,7 +58,14 @@ This repo uses a three-branch promotion pipeline: `dev` → `test` → `main`.
 - Merge to `main` triggers skill packaging/publishing and wiki publishing.
 - All changes require review from @Fyzel (enforced via CODEOWNERS).
 
-Work on feature branches cut from `dev`, then PR into `dev`.
+All commits must be GPG-signed. Configure git signing before committing:
+```sh
+git config commit.gpgsign true
+```
+
+Branch naming conventions (all cut from `dev`, PR back into `dev`):
+- `feat/*` — new skills or features
+- `doc/*` — documentation-only updates
 
 Promotion PRs require two GitHub repo settings configured:
 - **Secret** `PROMOTE_TOKEN` — a PAT with `repo` scope (used to open PRs across branches; `GITHUB_TOKEN` cannot open PRs targeting protected branches in some configurations).
