@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## What This Repository Is
 
-A collection of custom **Claude Code skills** — prompt-driven instruction sets that Claude Code loads on demand to handle specific tasks. Skills are plain Markdown files with YAML frontmatter; there is no build system, package manager, or test suite.
+A collection of custom **Claude Code skills** — prompt-driven instruction sets that Claude Code loads on demand to handle specific tasks. Skills are plain Markdown files with YAML frontmatter. Python tooling (`requirements.txt`, `.venv`) exists for validation and pre-commit hooks; there is no application build system or test suite.
 
 ## Skill File Structure
 
@@ -39,8 +39,9 @@ Large reference files are too big to read in full. Skills that use them must ins
 ## Adding a New Skill
 
 1. Create `skills/<skill-name>/SKILL.md` with frontmatter (`name`, `description`) and the full skill instructions.
-2. Register it in the Claude Code settings so it appears in the skill list (typically via the plugin or settings.json `skills` array — check your local Claude Code config).
+2. Install the skill by placing it at `~/.claude/skills/<skill-name>/` (personal, all projects) or `.claude/skills/<skill-name>/` (project-scoped). Skills are file-based — no settings.json registration required.
 3. If the skill references large lookup tables or tag catalogs, put them under `skills/<skill-name>/references/` and instruct the skill to read them selectively by section.
+4. Run the skill validator to confirm structure before committing: `skills/skill-validator/scripts/validate-skills.py`
 
 ## Skill Authoring Conventions
 
@@ -86,10 +87,23 @@ references/
 
 **`publish-wiki.yml`** — builds the GitHub repo wiki from skills. The `Home.md` page is a generated index table (skill name + description from frontmatter). Each skill gets its own wiki page: the `SKILL.md` content with frontmatter stripped, followed by any files under `references/` appended verbatim. The wiki is only updated when content changes.
 
+## Python Tooling
+
+Python tooling is managed via `.venv` and `requirements.txt`:
+
+```sh
+python -m venv .venv
+pip install -r requirements.txt
+```
+
+Packages: `pylint`, `bandit`, `pre-commit`, `PyYAML`.
+
 ## Pre-commit Hooks
 
-Pre-commit is configured with three hooks (`.pre-commit-config.yaml`). All run against local tools that must be installed:
+Pre-commit is configured with five hooks (`.pre-commit-config.yaml`). All run against local tools that must be installed:
 
+- **actionlint** — lints GitHub Actions workflow files (requires `actionlint`)
+- **package-skills** — validates all `SKILL.md` files on any commit touching `skills/` (requires `.venv`)
 - **trivy-secrets** — secret detection scan of the whole repo (requires `trivy`)
 - **pylint** — lints any Python files (requires `pylint`)
 - **bandit** — security scan of any Python files (requires `bandit -r -ll`)

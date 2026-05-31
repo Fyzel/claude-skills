@@ -5,15 +5,16 @@ description: Validate Claude Code skill files (SKILL.md) against Anthropic's str
 
 # Skill Validator
 
-Validates `SKILL.md` files in the `skills/` directory against Anthropic's requirements using `scripts/validate-skills.py`.
+Validates `SKILL.md` files in the `skills/` directory against Anthropic's requirements using `skills/skill-validator/scripts/validate-skills.py`.
 
 ## What it checks
 
 - `name` field present and matches the skill's directory name
 - `description` field present
+- No XML tags (`<...>`) in `description` — Claude Code rejects these on load
 - Combined `description` + `when_to_use` length ≤ 1,536 characters
-- Frontmatter delimited with `---`
-- Simulates `.skill` packaging and reports archive size
+- Frontmatter parsed via PyYAML (handles block scalars correctly)
+- Packaging simulation writes `skills/<name>/.test/<name>.skill` and reports archive size
 
 ## Run
 
