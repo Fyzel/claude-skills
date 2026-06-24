@@ -3,3 +3,4 @@
 /.venv
 skills/*/.test/
 .idea
+/ollama-dev.json
