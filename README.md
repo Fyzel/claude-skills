@@ -4,7 +4,11 @@ A collection of custom skills for [Claude Code](https://claude.ai/code). Each sk
 
 ## Table of Contents
 
-- [Install as plugins](#install-as-plugins)
+- [Installation](#installation)
+  - [Prerequisites](#prerequisites)
+  - [Option A — Plugin marketplace (recommended)](#option-a--plugin-marketplace-recommended)
+  - [Option B — Install a single skill manually](#option-b--install-a-single-skill-manually)
+  - [Option C — Install from a packaged `.skill` release](#option-c--install-from-a-packaged-skill-release)
 - [Skills](#skills)
   - [hand-off](#hand-off)
   - [skill-validator](#skill-validator)
@@ -14,9 +18,18 @@ A collection of custom skills for [Claude Code](https://claude.ai/code). Each sk
 
 ---
 
-## Install as plugins
+## Installation
 
-This repo is a Claude Code plugin marketplace. Each skill is published as its own plugin, so you can install only the ones you want.
+Pick whichever method fits. The marketplace (Option A) is the easiest to keep updated; Options B and C install skills without registering a marketplace.
+
+### Prerequisites
+
+- [Claude Code](https://claude.ai/code) installed and authenticated (`claude` on your `PATH`).
+- `git` (for the marketplace and for cloning this repo).
+
+### Option A — Plugin marketplace (recommended)
+
+This repo is a Claude Code plugin marketplace. Each skill is published as its own plugin, so you can install only the ones you want. Run these inside a Claude Code session:
 
 ```sh
 # Register the marketplace (one time)
@@ -33,7 +46,38 @@ This repo is a Claude Code plugin marketplace. Each skill is published as its ow
 /plugin marketplace update claude-skills
 ```
 
-The marketplace catalog lives at [`.claude-plugin/marketplace.json`](.claude-plugin/marketplace.json); each skill carries its own plugin manifest at `skills/<name>/.claude-plugin/plugin.json`.
+Browse and toggle installed plugins anytime with `/plugin`. The marketplace catalog lives at [`.claude-plugin/marketplace.json`](.claude-plugin/marketplace.json); each skill carries its own plugin manifest at `skills/<name>/.claude-plugin/plugin.json`.
+
+### Option B — Install a single skill manually
+
+Skills are file-based — no marketplace or `settings.json` registration required. Copy the skill directory to one of Claude Code's skill locations:
+
+| Scope | Destination |
+|---|---|
+| Personal (all projects) | `~/.claude/skills/<skill-name>/` |
+| Project-scoped | `<project>/.claude/skills/<skill-name>/` |
+
+```sh
+git clone https://github.com/Fyzel/claude-skills.git
+# Personal install of one skill (Linux / macOS):
+mkdir -p ~/.claude/skills
+cp -r claude-skills/skills/suno-songwriter ~/.claude/skills/
+
+# Windows (PowerShell):
+# Copy-Item -Recurse claude-skills\skills\suno-songwriter $HOME\.claude\skills\
+```
+
+Claude Code discovers the skill on the next session — `SKILL.md` must sit at `<skill-name>/SKILL.md`.
+
+### Option C — Install from a packaged `.skill` release
+
+Every merge to `main` publishes each skill as a `<skill-name>.skill` archive on the [Releases](https://github.com/Fyzel/claude-skills/releases) page (tagged `<skill-name>-v<N>`). A `.skill` file is a flat zip of the skill directory. Download it and unzip into a skill location:
+
+```sh
+# Example: install suno-songwriter from a downloaded archive (Linux / macOS)
+mkdir -p ~/.claude/skills/suno-songwriter
+unzip suno-songwriter.skill -d ~/.claude/skills/suno-songwriter/
+```
 
 ---
 
