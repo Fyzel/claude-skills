@@ -4,9 +4,15 @@ A collection of custom skills for [Claude Code](https://claude.ai/code). Each sk
 
 ## Table of Contents
 
-- [Install as plugins](#install-as-plugins)
+- [Installation](#installation)
+  - [Prerequisites](#prerequisites)
+  - [Option A — Plugin marketplace (recommended)](#option-a--plugin-marketplace-recommended)
+  - [Option B — Install a single skill manually](#option-b--install-a-single-skill-manually)
+  - [Option C — Install from a packaged `.skill` release](#option-c--install-from-a-packaged-skill-release)
 - [Skills](#skills)
+  - [github-doc-sync](#github-doc-sync)
   - [hand-off](#hand-off)
+  - [pr-comment-triage](#pr-comment-triage)
   - [skill-validator](#skill-validator)
   - [suno-songwriter](#suno-songwriter)
 - [Skill Structure](#skill-structure)
@@ -14,9 +20,18 @@ A collection of custom skills for [Claude Code](https://claude.ai/code). Each sk
 
 ---
 
-## Install as plugins
+## Installation
 
-This repo is a Claude Code plugin marketplace. Each skill is published as its own plugin, so you can install only the ones you want.
+Pick whichever method fits. The marketplace (Option A) is the easiest to keep updated; Options B and C install skills without registering a marketplace.
+
+### Prerequisites
+
+- [Claude Code](https://claude.ai/code) installed and authenticated (`claude` on your `PATH`).
+- `git` (for the marketplace and for cloning this repo).
+
+### Option A — Plugin marketplace (recommended)
+
+This repo is a Claude Code plugin marketplace. Each skill is published as its own plugin, so you can install only the ones you want. Run these inside a Claude Code session:
 
 ```sh
 # Register the marketplace (one time)
@@ -33,11 +48,62 @@ This repo is a Claude Code plugin marketplace. Each skill is published as its ow
 /plugin marketplace update claude-skills
 ```
 
-The marketplace catalog lives at [`.claude-plugin/marketplace.json`](.claude-plugin/marketplace.json); each skill carries its own plugin manifest at `skills/<name>/.claude-plugin/plugin.json`.
+Browse and toggle installed plugins anytime with `/plugin`. The marketplace catalog lives at [`.claude-plugin/marketplace.json`](.claude-plugin/marketplace.json); each skill carries its own plugin manifest at `skills/<name>/.claude-plugin/plugin.json`.
+
+### Option B — Install a single skill manually
+
+Skills are file-based — no marketplace or `settings.json` registration required. Copy the skill directory to one of Claude Code's skill locations:
+
+| Scope | Destination |
+|---|---|
+| Personal (all projects) | `~/.claude/skills/<skill-name>/` |
+| Project-scoped | `<project>/.claude/skills/<skill-name>/` |
+
+```sh
+git clone https://github.com/Fyzel/claude-skills.git
+# Personal install of one skill (Linux / macOS):
+mkdir -p ~/.claude/skills
+cp -r claude-skills/skills/suno-songwriter ~/.claude/skills/
+
+# Windows (PowerShell):
+# Copy-Item -Recurse claude-skills\skills\suno-songwriter $HOME\.claude\skills\
+```
+
+Claude Code discovers the skill on the next session — `SKILL.md` must sit at `<skill-name>/SKILL.md`.
+
+### Option C — Install from a packaged `.skill` release
+
+Every merge to `main` publishes each skill as a `<skill-name>.skill` archive on the [Releases](https://github.com/Fyzel/claude-skills/releases) page (tagged `<skill-name>-v<N>`). A `.skill` file is a flat zip of the skill directory. Download it and unzip into a skill location:
+
+```sh
+# Example: install suno-songwriter from a downloaded archive (Linux / macOS)
+mkdir -p ~/.claude/skills/suno-songwriter
+unzip suno-songwriter.skill -d ~/.claude/skills/suno-songwriter/
+```
 
 ---
 
 ## Skills
+
+### github-doc-sync
+
+**Trigger phrases:** "sync the docs", "update the docs", "doc sync", "update README and wiki", "keep docs in sync", or after resolving an issue / merging a feature when docs may be stale.
+
+Propagates a code change into every place the project documents it — the README, in-repo guides (`CLAUDE.md`, `CONTRIBUTING`, `docs/`), and the GitHub wiki — in one pass, so the surfaces don't drift.
+
+**How it works:**
+
+1. **Detect surfaces** — finds which doc surfaces the repo actually has (README, in-repo guides, wiki); skips absent ones.
+2. **Identify the delta** — maps the diff to doc-relevant facts (CLI flag, config key, exit code, install step).
+3. **Update README and in-repo guides** — edits affected sections in place, matching existing structure.
+4. **Update the wiki** — clones the separate `OWNER/REPO.wiki.git` repo, edits matching pages, pushes.
+5. **Verify** — cross-checks all surfaces agree on the same facts.
+
+Requires `git`; the wiki step needs the repo's wiki enabled, and pushing needs `gh` / git push access. Wiki pushes go live immediately.
+
+**Location:** [`skills/github-doc-sync/`](skills/github-doc-sync/)
+
+---
 
 ### hand-off
 
@@ -60,6 +126,25 @@ Delegates a defined scope of work to a fresh Claude Code subagent with full cont
 5. **Synthesize** — verifies `output.md` exists, then summarizes results back into the parent conversation. Offers recovery options (diff reconstruction, re-run, manual inspect) if `output.md` is missing.
 
 **Location:** [`skills/hand-off/`](skills/hand-off/)
+
+---
+
+### pr-comment-triage
+
+**Trigger phrases:** "check the Copilot comment(s) on PR N", "address the review comments", "reply to the review comments", "resolve PR feedback", "handle the PR comments", or any request to go through a reviewer's findings on a pull request.
+
+Triages and resolves pull-request review comments end to end — works for any reviewer (Copilot, humans, bots), language, or repo.
+
+**How it works:**
+
+1. **Fetch** — pulls the PR's review comments (especially GitHub Copilot automated review).
+2. **Fix** — resolves each comment in code.
+3. **Test** — runs the project's test suite.
+4. **Reply** — posts a threaded reply under each original comment, by its comment ID.
+
+Requires the `gh` CLI to be authenticated.
+
+**Location:** [`skills/pr-comment-triage/`](skills/pr-comment-triage/)
 
 ---
 

@@ -29,10 +29,30 @@ jobs:
             cd ..
           fi
 
+          # Reads a frontmatter scalar. Handles inline values and YAML
+          # folded/literal block scalars (`key: >` / `key: |`), joining the
+          # block's indented lines into a single line.
           get_frontmatter() {
             local file="$1" key="$2"
-            sed -n "1{/^---$/!q};/^---$/,/^---$/p" "${file}" \
-              | grep "^${key}:" | head -1 | sed "s/^${key}: *//"
+            awk -v key="$key" '
+              NR==1 && $0!="---" {exit}
+              /^---$/ {fm++; if (fm==2) exit; next}
+              fm==1 && $0 ~ "^" key ":" {
+                val=$0; sub("^" key ":[[:space:]]*","",val)
+                if (val ~ /^[>|][+-]?$/ || val=="") {
+                  block=""
+                  while ((getline line) > 0) {
+                    if (line ~ /^---$/ || line ~ /^[^[:space:]]/) break
+                    gsub(/^[[:space:]]+/,"",line)
+                    block=(block=="" ? line : block " " line)
+                  }
+                  print block
+                } else {
+                  print val
+                }
+                exit
+              }
+            ' "${file}"
           }
 
           strip_frontmatter() {
