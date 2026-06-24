@@ -1,0 +1,13 @@
+{
+  "$schema": "https://json.schemastore.org/claude-code-plugin-manifest.json",
+  "name": "pr-comment-triage",
+  "version": "1.0.0",
+  "description": "Triage and resolve PR review comments end to end, then reply under each original comment.",
+  "author": {
+    "name": "Michael R. Schwab"
+  },
+  "homepage": "https://github.com/Fyzel/claude-skills",
+  "repository": "https://github.com/Fyzel/claude-skills",
+  "license": "Apache-2.0",
+  "keywords": ["github", "pull-request", "code-review", "copilot"]
+}

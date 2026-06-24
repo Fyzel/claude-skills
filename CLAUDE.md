@@ -32,6 +32,23 @@ The `description` field is the most critical part of any skill. Claude Code read
 - Cover fuzzy/adjacent triggers ("turning a poem into a song", "requesting a chorus")
 - Explicitly note when to trigger even without the primary keyword ("even when the user does not say the word 'Suno'")
 
+## Plugin Marketplace
+
+This repo doubles as a **Claude Code plugin marketplace**, so each skill is installable individually as a plugin.
+
+- `.claude-plugin/marketplace.json` (repo root) is the catalog. It lists one plugin entry per skill, each with a relative `source` pointing at the skill directory (e.g. `"./skills/suno-songwriter"`).
+- Each `skills/<name>/.claude-plugin/plugin.json` is that skill's plugin manifest. Because the skill's `SKILL.md` sits at the plugin root (no nested `skills/` dir, no `skills` manifest field), Claude Code auto-loads it as a single-skill plugin; the invocation name comes from the `SKILL.md` frontmatter `name`.
+- Users install with `/plugin marketplace add Fyzel/claude-skills` then `/plugin install <skill-name>@claude-skills`.
+
+When adding a new skill, also add a matching entry to `marketplace.json` and a `.claude-plugin/plugin.json` in the skill directory, then validate both:
+
+```sh
+claude plugin validate .                       # marketplace.json
+claude plugin validate ./skills/<name> --strict  # the skill's plugin manifest
+```
+
+The `.skill` publishing pipeline (below) excludes `.claude-plugin/` from the archive, so the plugin manifest does not leak into the Agent Skill releases.
+
 ## Reference Files
 
 Large reference files are too big to read in full. Skills that use them must instruct Claude to **scan section headers first**, then read only the relevant entries for the current task. When editing reference files, preserve the heading structure — it is the navigation surface.
@@ -41,7 +58,8 @@ Large reference files are too big to read in full. Skills that use them must ins
 1. Create `skills/<skill-name>/SKILL.md` with frontmatter (`name`, `description`) and the full skill instructions.
 2. Install the skill by placing it at `~/.claude/skills/<skill-name>/` (personal, all projects) or `.claude/skills/<skill-name>/` (project-scoped). Skills are file-based — no settings.json registration required.
 3. If the skill references large lookup tables or tag catalogs, put them under `skills/<skill-name>/references/` and instruct the skill to read them selectively by section.
-4. Run the skill validator to confirm structure before committing: `skills/skill-validator/scripts/validate-skills.py`
+4. Add a `.claude-plugin/plugin.json` in the skill directory and a matching plugin entry in `.claude-plugin/marketplace.json` so the skill is installable from the marketplace (see [Plugin Marketplace](#plugin-marketplace)).
+5. Run the skill validator to confirm structure before committing: `skills/skill-validator/scripts/validate-skills.py`
 
 ## Skill Authoring Conventions
 

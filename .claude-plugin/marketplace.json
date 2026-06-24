@@ -1,0 +1,50 @@
+{
+  "$schema": "https://json.schemastore.org/claude-code-marketplace.json",
+  "name": "claude-skills",
+  "owner": {
+    "name": "Michael R. Schwab"
+  },
+  "description": "A collection of custom Claude Code skills, each installable as its own plugin.",
+  "plugins": [
+    {
+      "name": "suno-songwriter",
+      "source": "./skills/suno-songwriter",
+      "description": "Compose original Suno AI songs as copy-paste-ready prompts (lyrics, style, titles).",
+      "version": "1.0.0",
+      "license": "Apache-2.0",
+      "keywords": ["suno", "songwriting", "lyrics", "music"]
+    },
+    {
+      "name": "hand-off",
+      "source": "./skills/hand-off",
+      "description": "Delegate a scoped chunk of work to a fresh Claude Code subagent with full context preserved.",
+      "version": "1.0.0",
+      "license": "Apache-2.0",
+      "keywords": ["handoff", "delegation", "subagent", "context"]
+    },
+    {
+      "name": "pr-comment-triage",
+      "source": "./skills/pr-comment-triage",
+      "description": "Triage and resolve PR review comments end to end, then reply under each original comment.",
+      "version": "1.0.0",
+      "license": "Apache-2.0",
+      "keywords": ["github", "pull-request", "code-review", "copilot"]
+    },
+    {
+      "name": "github-doc-sync",
+      "source": "./skills/github-doc-sync",
+      "description": "Keep a GitHub project's README, in-repo guides, and wiki in sync with code changes.",
+      "version": "1.0.0",
+      "license": "Apache-2.0",
+      "keywords": ["github", "documentation", "wiki", "readme"]
+    },
+    {
+      "name": "skill-validator",
+      "source": "./skills/skill-validator",
+      "description": "Validate SKILL.md files against Anthropic's structural requirements.",
+      "version": "1.0.0",
+      "license": "Apache-2.0",
+      "keywords": ["skills", "validation", "linting"]
+    }
+  ]
+}
