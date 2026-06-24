@@ -10,7 +10,9 @@ A collection of custom skills for [Claude Code](https://claude.ai/code). Each sk
   - [Option B — Install a single skill manually](#option-b--install-a-single-skill-manually)
   - [Option C — Install from a packaged `.skill` release](#option-c--install-from-a-packaged-skill-release)
 - [Skills](#skills)
+  - [github-doc-sync](#github-doc-sync)
   - [hand-off](#hand-off)
+  - [pr-comment-triage](#pr-comment-triage)
   - [skill-validator](#skill-validator)
   - [suno-songwriter](#suno-songwriter)
 - [Skill Structure](#skill-structure)
@@ -83,6 +85,26 @@ unzip suno-songwriter.skill -d ~/.claude/skills/suno-songwriter/
 
 ## Skills
 
+### github-doc-sync
+
+**Trigger phrases:** "sync the docs", "update the docs", "doc sync", "update README and wiki", "keep docs in sync", or after resolving an issue / merging a feature when docs may be stale.
+
+Propagates a code change into every place the project documents it — the README, in-repo guides (`CLAUDE.md`, `CONTRIBUTING`, `docs/`), and the GitHub wiki — in one pass, so the surfaces don't drift.
+
+**How it works:**
+
+1. **Detect surfaces** — finds which doc surfaces the repo actually has (README, in-repo guides, wiki); skips absent ones.
+2. **Identify the delta** — maps the diff to doc-relevant facts (CLI flag, config key, exit code, install step).
+3. **Update README and in-repo guides** — edits affected sections in place, matching existing structure.
+4. **Update the wiki** — clones the separate `OWNER/REPO.wiki.git` repo, edits matching pages, pushes.
+5. **Verify** — cross-checks all surfaces agree on the same facts.
+
+Requires `git`; the wiki step needs the repo's wiki enabled, and pushing needs `gh` / git push access. Wiki pushes go live immediately.
+
+**Location:** [`skills/github-doc-sync/`](skills/github-doc-sync/)
+
+---
+
 ### hand-off
 
 **Trigger phrases:** `/hand-off`, "hand off", "delegate to a subagent", "spin this off", "pass this to a fresh agent", or any mention of context exhaustion and wanting to continue elsewhere.
@@ -104,6 +126,25 @@ Delegates a defined scope of work to a fresh Claude Code subagent with full cont
 5. **Synthesize** — verifies `output.md` exists, then summarizes results back into the parent conversation. Offers recovery options (diff reconstruction, re-run, manual inspect) if `output.md` is missing.
 
 **Location:** [`skills/hand-off/`](skills/hand-off/)
+
+---
+
+### pr-comment-triage
+
+**Trigger phrases:** "check the Copilot comment(s) on PR N", "address the review comments", "reply to the review comments", "resolve PR feedback", "handle the PR comments", or any request to go through a reviewer's findings on a pull request.
+
+Triages and resolves pull-request review comments end to end — works for any reviewer (Copilot, humans, bots), language, or repo.
+
+**How it works:**
+
+1. **Fetch** — pulls the PR's review comments (especially GitHub Copilot automated review).
+2. **Fix** — resolves each comment in code.
+3. **Test** — runs the project's test suite.
+4. **Reply** — posts a threaded reply under each original comment, by its comment ID.
+
+Requires the `gh` CLI to be authenticated.
+
+**Location:** [`skills/pr-comment-triage/`](skills/pr-comment-triage/)
 
 ---
 
