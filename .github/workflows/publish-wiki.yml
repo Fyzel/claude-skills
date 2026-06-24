@@ -48,6 +48,7 @@ jobs:
             echo "|---|---|"
           } > "${home}"
 
+          install_cmds=""
           for dir in skills/*/; do
             skill_name="${dir#skills/}"
             skill_name="${skill_name%/}"
@@ -59,6 +60,7 @@ jobs:
             description=$(get_frontmatter "${skill_file}" "description")
 
             echo "| [${display}](${skill_name}) | ${description} |" >> "${home}"
+            install_cmds="${install_cmds}/plugin install ${skill_name}@claude-skills"$'\n'
 
             # Build per-skill page
             skill_page="wiki/${skill_name}.md"
@@ -83,6 +85,29 @@ jobs:
               fi
             } > "${skill_page}"
           done
+
+          # Append marketplace install instructions and license to Home
+          {
+            echo ""
+            echo "## Install as plugins"
+            echo ""
+            echo "This repository is a [Claude Code plugin marketplace](https://code.claude.com/docs/en/plugin-marketplaces). Each skill is published as its own plugin, so you can install only the ones you want."
+            echo ""
+            echo '```sh'
+            echo "# Register the marketplace (one time)"
+            echo "/plugin marketplace add Fyzel/claude-skills"
+            echo ""
+            echo "# Install individual skills"
+            printf '%s' "${install_cmds}"
+            echo ""
+            echo "# Refresh after the marketplace updates"
+            echo "/plugin marketplace update claude-skills"
+            echo '```'
+            echo ""
+            echo "## License"
+            echo ""
+            echo "Licensed under the [Apache License, Version 2.0](https://github.com/Fyzel/claude-skills/blob/main/LICENSE). Copyright 2026 Michael R. Schwab."
+          } >> "${home}"
 
           cd wiki
           git config user.name "github-actions[bot]"

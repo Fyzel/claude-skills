@@ -2,3 +2,4 @@
 /.remember/logs/*
 /.venv
 skills/*/.test/
+.idea

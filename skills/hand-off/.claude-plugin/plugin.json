@@ -1,0 +1,13 @@
+{
+  "$schema": "https://json.schemastore.org/claude-code-plugin-manifest.json",
+  "name": "hand-off",
+  "version": "1.0.0",
+  "description": "Delegate a scoped chunk of work to a fresh Claude Code subagent with full context preserved.",
+  "author": {
+    "name": "Michael R. Schwab"
+  },
+  "homepage": "https://github.com/Fyzel/claude-skills",
+  "repository": "https://github.com/Fyzel/claude-skills",
+  "license": "Apache-2.0",
+  "keywords": ["handoff", "delegation", "subagent", "context"]
+}

@@ -1,0 +1,13 @@
+{
+  "$schema": "https://json.schemastore.org/claude-code-plugin-manifest.json",
+  "name": "github-doc-sync",
+  "version": "1.0.0",
+  "description": "Keep a GitHub project's README, in-repo guides, and wiki in sync with code changes.",
+  "author": {
+    "name": "Michael R. Schwab"
+  },
+  "homepage": "https://github.com/Fyzel/claude-skills",
+  "repository": "https://github.com/Fyzel/claude-skills",
+  "license": "Apache-2.0",
+  "keywords": ["github", "documentation", "wiki", "readme"]
+}

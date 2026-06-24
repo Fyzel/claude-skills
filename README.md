@@ -1,15 +1,39 @@
 # claude-skills
 
-A collection of custom skills for [Claude Code](https://claude.ai/code). Each skill is a self-contained directory containing a `SKILL.md` and optional supporting reference files.
+A collection of custom skills for [Claude Code](https://claude.ai/code). Each skill is a self-contained directory containing a `SKILL.md` and optional supporting reference files. The repo also doubles as a [Claude Code plugin marketplace](https://code.claude.com/docs/en/plugin-marketplaces) — each skill is installable individually as a plugin.
 
 ## Table of Contents
 
+- [Install as plugins](#install-as-plugins)
 - [Skills](#skills)
   - [hand-off](#hand-off)
   - [skill-validator](#skill-validator)
   - [suno-songwriter](#suno-songwriter)
 - [Skill Structure](#skill-structure)
 - [Development](#development)
+
+---
+
+## Install as plugins
+
+This repo is a Claude Code plugin marketplace. Each skill is published as its own plugin, so you can install only the ones you want.
+
+```sh
+# Register the marketplace (one time)
+/plugin marketplace add Fyzel/claude-skills
+
+# Install individual skills
+/plugin install suno-songwriter@claude-skills
+/plugin install hand-off@claude-skills
+/plugin install pr-comment-triage@claude-skills
+/plugin install github-doc-sync@claude-skills
+/plugin install skill-validator@claude-skills
+
+# Refresh after the marketplace updates
+/plugin marketplace update claude-skills
+```
+
+The marketplace catalog lives at [`.claude-plugin/marketplace.json`](.claude-plugin/marketplace.json); each skill carries its own plugin manifest at `skills/<name>/.claude-plugin/plugin.json`.
 
 ---
 
@@ -86,9 +110,13 @@ Composes original songs and delivers them as three copy-paste-ready blocks for t
 ## Skill Structure
 
 ```
+.claude-plugin/
+  marketplace.json        # Plugin marketplace catalog (lists every skill as a plugin)
 skills/
   <skill-name>/
     SKILL.md              # Skill instructions with YAML frontmatter (name, description)
+    .claude-plugin/
+      plugin.json         # Plugin manifest — makes the skill installable via the marketplace
     scripts/              # Driver scripts bundled with the skill (optional)
     references/           # Supporting reference files (optional)
     .test/                # Local test artifacts — gitignored, not published
@@ -119,6 +147,10 @@ Validate all skill files and produce local `.skill` packages:
 ```
 
 The validator also runs automatically on every commit that touches `skills/` (validation only — no packaging).
+
+## License
+
+Licensed under the [Apache License, Version 2.0](LICENSE).
 
 ## Publishing
 
