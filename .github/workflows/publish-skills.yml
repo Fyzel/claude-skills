@@ -64,7 +64,7 @@ jobs:
               "${SHORT_SHA}" "${GITHUB_RUN_NUMBER}" "${changes}")
 
             asset="${skill_name}.skill"
-            if ! (cd "skills/${skill_name}" && zip -r "../../${asset}" .); then
+            if ! (cd "skills/${skill_name}" && zip -r "../../${asset}" . -x '.claude-plugin/*'); then
               echo "::error::Failed to zip ${skill_name}" >&2
               failed=1
               continue

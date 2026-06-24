@@ -1,0 +1,13 @@
+{
+  "$schema": "https://json.schemastore.org/claude-code-plugin-manifest.json",
+  "name": "skill-validator",
+  "version": "1.0.0",
+  "description": "Validate SKILL.md files against Anthropic's structural requirements.",
+  "author": {
+    "name": "Michael R. Schwab"
+  },
+  "homepage": "https://github.com/Fyzel/claude-skills",
+  "repository": "https://github.com/Fyzel/claude-skills",
+  "license": "Apache-2.0",
+  "keywords": ["skills", "validation", "linting"]
+}
