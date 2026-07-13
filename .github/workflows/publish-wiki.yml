@@ -6,6 +6,8 @@ on:
       - main
   workflow_dispatch:
 
+permissions: {}
+
 jobs:
   publish-wiki:
     runs-on: ubuntu-latest
@@ -15,7 +17,9 @@ jobs:
       GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     steps:
       - name: Checkout
-        uses: actions/checkout@v6
+        uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
+        with:
+          persist-credentials: false
 
       - name: Build and publish wiki
         run: |
