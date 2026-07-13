@@ -10,6 +10,7 @@ A collection of custom skills for [Claude Code](https://claude.ai/code). Each sk
   - [Option B — Install a single skill manually](#option-b--install-a-single-skill-manually)
   - [Option C — Install from a packaged `.skill` release](#option-c--install-from-a-packaged-skill-release)
 - [Skills](#skills)
+  - [github-actions-security-review](#github-actions-security-review)
   - [github-doc-sync](#github-doc-sync)
   - [hand-off](#hand-off)
   - [pr-comment-triage](#pr-comment-triage)
@@ -42,6 +43,7 @@ This repo is a Claude Code plugin marketplace. Each skill is published as its ow
 /plugin install hand-off@claude-skills
 /plugin install pr-comment-triage@claude-skills
 /plugin install github-doc-sync@claude-skills
+/plugin install github-actions-security-review@claude-skills
 /plugin install skill-validator@claude-skills
 
 # Refresh after the marketplace updates
@@ -84,6 +86,23 @@ unzip suno-songwriter.skill -d ~/.claude/skills/suno-songwriter/
 ---
 
 ## Skills
+
+### github-actions-security-review
+
+**Trigger phrases:** "review this GitHub Actions workflow", "audit my CI/CD pipeline", "harden this workflow", mentions of `.github/workflows`, `GITHUB_TOKEN`, `pull_request_target`, `workflow_run`, self-hosted runners, action pinning, OIDC/trusted publishing, or Zizmor/CodeQL for Actions, or a request for a new workflow to be written securely.
+
+Audits and hardens GitHub Actions workflows against the [OWASP GitHub Actions Security Cheat Sheet](https://cheatsheetseries.owasp.org/cheatsheets/GitHub_Actions_Security_Cheat_Sheet.html): dangerous triggers, unpinned/impostor third-party actions, `GITHUB_TOKEN` over-permissioning, script injection, secrets handling, artifact/cache poisoning, self-hosted runner risk, repo hardening, AI-assistant-in-CI/CD risk, and static analysis (CodeQL, Zizmor).
+
+**How it works:**
+
+1. **Locate** — finds workflow files, composite actions, and dependency-update config to verify.
+2. **Run the Security Gate** — checks every CRITICAL control (code-execution / secret-exfiltration risk) and STANDARD control (defense-in-depth hygiene) against each file, citing the OWASP section and a reference file for detection patterns and fixes.
+3. **Report** — CRITICAL findings block certifying a workflow as safe; STANDARD findings are recommendations. Passing workflows are confirmed, not padded with manufactured findings.
+4. **Write securely** — when scaffolding a new workflow, applies every CRITICAL control by construction, then re-runs the gate against its own output.
+
+**Location:** [`skills/github-actions-security-review/`](skills/github-actions-security-review/)
+
+---
 
 ### github-doc-sync
 
