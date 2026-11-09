@@ -45,6 +45,14 @@
       "version": "1.0.0",
       "license": "Apache-2.0",
       "keywords": ["skills", "validation", "linting"]
+    },
+    {
+      "name": "github-actions-security-review",
+      "source": "./skills/github-actions-security-review",
+      "description": "Audit and harden GitHub Actions workflows against the OWASP GitHub Actions Security Cheat Sheet.",
+      "version": "1.0.0",
+      "license": "Apache-2.0",
+      "keywords": ["github-actions", "ci-cd", "security", "owasp"]
     }
   ]
 }

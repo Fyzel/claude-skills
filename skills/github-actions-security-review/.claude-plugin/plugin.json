@@ -1,0 +1,13 @@
+{
+  "$schema": "https://json.schemastore.org/claude-code-plugin-manifest.json",
+  "name": "github-actions-security-review",
+  "version": "1.0.0",
+  "description": "Audit and harden GitHub Actions workflows against the OWASP GitHub Actions Security Cheat Sheet.",
+  "author": {
+    "name": "Michael R. Schwab"
+  },
+  "homepage": "https://github.com/Fyzel/claude-skills",
+  "repository": "https://github.com/Fyzel/claude-skills",
+  "license": "Apache-2.0",
+  "keywords": ["github-actions", "ci-cd", "security", "owasp"]
+}
